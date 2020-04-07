@@ -18,6 +18,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/netapp/capv-bootstrap/pkg/config/types"
 	"github.com/spf13/cobra"
 )
 
@@ -48,4 +49,8 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// deployCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func deployManagementCluster(spec *types.ConfigSpec) {
+
 }
