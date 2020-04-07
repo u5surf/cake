@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/netapp/capv-bootstrap/pkg/config/types"
 	"github.com/spf13/cobra"
@@ -33,24 +34,33 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("deploy called")
+		spec := &types.ConfigSpec{}
+		deployManagementCluster(spec)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(deployCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// deployCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// deployCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	deployCmd.Flags().StringVarP(&(cliSettings.config), "config", "c", "", "The config.yaml file to use for deployment (bypass prompts)")
 }
 
 func deployManagementCluster(spec *types.ConfigSpec) {
+	if cliSettings.config == "" {
+		fmt.Println("need to generate a config here")
+		runEasyConfig()
+	}
 
+	if cliSettings.config == "" {
+		fmt.Println("no config file provided and genconfig seems to have failed")
+		os.Exit(1)
+	}
+
+	collectNetworkInformation(spec)
+	collectAdditionalConfiguration(spec)
+	configureProviderSpecific(spec)
+	if runningFromConfig {
+		if err := registration.ValidateSpec(spec); err != nil {
+			log.Fatalln(err)
+		}
+	}
 }
