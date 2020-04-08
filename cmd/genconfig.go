@@ -22,9 +22,17 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/gookit/color"
 	"github.com/netapp/capv-bootstrap/pkg/config/types"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
+)
+
+var (
+	red    = color.New(color.FgRed)
+	blue   = color.New(color.FgBlue)
+	green  = color.New(color.FgGreen)
+	yellow = color.New(color.FgYellow)
 )
 
 var configFile string
@@ -108,7 +116,7 @@ func getConfigFile(regionName string) string {
 		return configFile
 	}
 
-	if err := createFolder(regionName); err != nil {
+	if err := createConfigDirectory(regionName); err != nil {
 		log.Fatalf("Unable to create folder, %v", err)
 	}
 
@@ -117,9 +125,9 @@ func getConfigFile(regionName string) string {
 	return fmt.Sprintf("%s/%s/config.yaml", basePath, regionName)
 }
 
-func createFolder(folderName string) error {
+func createConfigDirectory(directoryName string) error {
 	basePath := nksBaseDirPath()
-	fullPath := fmt.Sprintf("%s/%s", basePath, folderName)
+	fullPath := fmt.Sprintf("%s/%s", basePath, directoryName)
 
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 		err = os.Mkdir(fullPath, os.ModePerm)
@@ -131,4 +139,14 @@ func createFolder(folderName string) error {
 }
 
 func configure(spec *types.ConfigSpec) {
+	fmt.Println(fmt.Sprintf("%s DHCP will be replaced in future versions with internal IP services or a third party IPAM provider\n", yellow.Render("Note:")))
+
+	// fail fast if we can't connect to specified vSphere
+	if err := collectVsphereInformation(spec); err != nil {
+		log.Fatalln(err)
+	}
+
+	collectNetworkInformation(spec)
+	collectAdditionalConfiguration(spec)
+	writeConfig(spec)
 }
