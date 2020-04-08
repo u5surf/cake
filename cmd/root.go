@@ -38,7 +38,19 @@ type settings struct {
 	logLevel                  string
 }
 
-var cliSettings settings
+var (
+	cliSettings settings
+	envSettings settings
+)
+
+func readEnvSettings() {
+	envSettings.serviceClusterPodCIDR = os.Getenv("BOOTSTRAP_CLUSTER_POD_CIDR")
+	envSettings.serviceClusterServiceCIDR = os.Getenv("BOOTSTRAP_CLUSTER_SERVICE_CIDR")
+	envSettings.logLevel = os.Getenv("LOG_LEVEL")
+	envSettings.vCenterURL = os.Getenv("GOVC_URL")
+	envSettings.vCenterUser = os.Getenv("GOVC_USERNAME")
+	envSettings.vCenterPassword = os.Getenv("GOVC_PASSWORD")
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

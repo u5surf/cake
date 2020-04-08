@@ -69,21 +69,21 @@ type NameAndID struct {
 }
 
 func collectNetworkInformation(spec *types.ConfigSpec) {
-	getIPAMProvider(spec)
-
 	/*
-		switch spec.IPAM.Provider {
-		case types.MNodeIPService:
-			getMNodeInfo(spec)
-		case types.Infoblox:
-			// Infoblox input comes from config file only for now, need a better input mechanism when running via interactive CLI
-			return
-		case types.DHCP:
-			return
-		default:
-			fmt.Println(fmt.Sprintf("IPAM provider %s is not implemented, defaulting to DHCP", spec.IPAM.Provider))
-			spec.IPAM.Provider = types.DHCP
-		}
+		getIPAMProvider(spec)
+
+			switch spec.IPAM.Provider {
+			case types.MNodeIPService:
+				getMNodeInfo(spec)
+			case types.Infoblox:
+				// Infoblox input comes from config file only for now, need a better input mechanism when running via interactive CLI
+				return
+			case types.DHCP:
+				return
+			default:
+				fmt.Println(fmt.Sprintf("IPAM provider %s is not implemented, defaulting to DHCP", spec.IPAM.Provider))
+				spec.IPAM.Provider = types.DHCP
+			}
 	*/
 }
 
@@ -267,6 +267,7 @@ func disableAntiAffinity(spec *types.ConfigSpec) {
 	//spec.OptionalConfiguration.DisableHALoadbalancer = true
 }
 
+/*
 func getIPAMProvider(spec *types.ConfigSpec) {
 	if spec.IPAM.Provider != "" {
 		return
@@ -295,6 +296,7 @@ func getIPAMProvider(spec *types.ConfigSpec) {
 
 	spec.IPAM.Provider = IPAMProviders[idx]
 }
+*/
 
 func getMNodeInfo(spec *types.ConfigSpec) {
 
@@ -347,37 +349,12 @@ func getMNodeAuthSecret(spec *types.ConfigSpec) {
 }
 
 func getMNodeTLSInsecure(spec *types.ConfigSpec) {
-	if runningFromConfig {
-		return
-	}
-
 	spec.IPAM.MNode.TLSInsecure = getBooleanWithLabel(labelMNodeTLSInsecure)
 }
 
-func getProvider(spec *types.ConfigSpec) error {
-	prompt := promptui.Prompt{
-		Label:    fmt.Sprintf("Provider (%s)", strings.Join(provider.GetAll(), ", ")),
-		Validate: provider.IsValid,
-		Default:  config.Default.Provider,
-	}
-
-	provider, err := prompt.Run()
-	if err != nil {
-		return fmt.Errorf("invalid provider, %v", err)
-	}
-	spec.Provider = strings.ToLower(provider)
-	return nil
-}
-
 func collectElementInformation(spec *types.ConfigSpec) {
-	if runningFromConfig {
-		if !spec.Solidfire.Enable {
-			return
-		}
-	} else {
-		if spec.Solidfire.Enable = setupElementStorage(); !spec.Solidfire.Enable {
-			return
-		}
+	if spec.Solidfire.Enable = setupElementStorage(); !spec.Solidfire.Enable {
+		return
 	}
 
 	getSolidfireMVIP(spec)
@@ -463,7 +440,6 @@ func getVCenterURL(spec *types.ConfigSpec) error {
 	prompt := promptui.Prompt{
 		Label:    labelVCenterURL,
 		Validate: validateURL,
-		Default:  config.Default.VCenterURL,
 	}
 
 	var err error
@@ -503,8 +479,7 @@ func getVCenterUsername(spec *types.ConfigSpec) error {
 	}
 
 	prompt := promptui.Prompt{
-		Label:   labelVCenterUsername,
-		Default: config.Default.VCenterUser,
+		Label: labelVCenterUsername,
 	}
 
 	var err error
