@@ -72,12 +72,12 @@ func runEasyConfig() {
 	writeConfig(spec)
 }
 
-func nksBaseDirPath() string {
+func capvbsBaseDirPath() string {
 	if runtime.GOOS == "windows" {
-		return fmt.Sprintf("%s/.nks", os.Getenv("USERPROFILE"))
+		return fmt.Sprintf("%s/.capvbs", os.Getenv("USERPROFILE"))
 	}
 
-	return fmt.Sprintf("%s/.nks", os.Getenv("HOME"))
+	return fmt.Sprintf("%s/.capvbs", os.Getenv("HOME"))
 }
 
 func writeConfig(spec *types.ConfigSpec) {
@@ -117,16 +117,23 @@ func getConfigFile(regionName string) string {
 	}
 
 	if err := createConfigDirectory(regionName); err != nil {
-		log.Fatalf("Unable to create folder, %v", err)
+		log.Fatalf("Unable to create directory, %v", err)
 	}
 
-	basePath := nksBaseDirPath()
+	basePath := capvbsBaseDirPath()
 
 	return fmt.Sprintf("%s/%s/config.yaml", basePath, regionName)
 }
 
 func createConfigDirectory(directoryName string) error {
-	basePath := nksBaseDirPath()
+	basePath := capvbsBaseDirPath()
+	if _, err := os.Stat(basePath); os.IsNotExist(err) {
+		err = os.Mkdir(basePath, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
+
 	fullPath := fmt.Sprintf("%s/%s", basePath, directoryName)
 
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {

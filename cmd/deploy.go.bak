@@ -68,7 +68,7 @@ func deployManagementCluster(spec *types.ConfigSpec) {
 }
 
 //func register(spec *types.ConfigSpec) {
-func deployServiceCluster(spec *types.ConfigSpec) {
+func deployManagementCluster(spec *types.ConfigSpec) {
 	messages, logs := registration.Register(spec)
 	var wg sync.WaitGroup
 
@@ -79,22 +79,22 @@ func deployServiceCluster(spec *types.ConfigSpec) {
 
 	bootlogFile := registrationFile{
 		Name:        "bootstrap-vm.log",
-		Description: "Bootstrap VM output - Output from a vm in vCenter that helps provision the NKS service cluster",
+		Description: "Bootstrap VM output - Output from a vm in vCenter that helps provision the CAPv management cluster",
 	}
 
 	privateKeyFile := registrationFile{
-		Name:        "nks_private_key",
+		Name:        "capv_private_key",
 		Description: "Private SSH key - Can be used to access the infrastructure machines (bootstrap, load balancers, service cluster) for debugging purposes",
 	}
 
 	configFile := registrationFile{
 		Name:        "config.yaml",
-		Description: "Service Cluster Config.yaml - This file contains the config that was used during registration, this config can be used for re-registrations",
+		Description: "Management Cluster Config.yaml - This file contains the config that was used during registration, this config can be used for re-registrations",
 	}
 
 	kubeconfigFile := registrationFile{
 		Name:        "kubeconfig",
-		Description: "Service Cluster kubeconfig - This file contains the kubeconfig that was created during registration, used this to access the service cluster",
+		Description: "Management Cluster kubeconfig - This file contains the kubeconfig that was created during registration, used this to access the service cluster",
 	}
 
 	describeFileStructure(folderName, bootlogFile, privateKeyFile, configFile, kubeconfigFile)
@@ -104,9 +104,9 @@ func deployServiceCluster(spec *types.ConfigSpec) {
 
 	fmt.Printf("%-130s %s\n", "Message", "Progress")
 	fmt.Printf("%-130s %s\n", "-------", "--------")
-	basePath := nksBaseFolderPath()
+	basePath := capvbsBaseDirPath()
 	errorMessage := "Failed to register region. Reason: "
-	extendedFailureMessage := fmt.Sprintf("\nDebug Logs stored are available in %s/%s", nksBaseFolderPath(), folderName)
+	extendedFailureMessage := fmt.Sprintf("\nDebug Logs stored are available in %s/%s", capvbsBaseDirPath(), folderName)
 	privateSSHKeyFileCreated := false
 	for status := range messages {
 		if status.Failed {
@@ -148,5 +148,5 @@ func deployServiceCluster(spec *types.ConfigSpec) {
 		}
 	}
 
-	fmt.Printf("Region %s successfully registered using provider %s in NetApp Kubernetes Services.\n", spec.RegionName, spec.Provider)
+	fmt.Printf("Region %s successfully registered using provider %s.\n", spec.RegionName, spec.Provider)
 }

@@ -27,15 +27,15 @@ import (
 var cfgFile string
 
 type settings struct {
-	config                    string
-	vCenterURL                string
-	vCenterUser               string
-	vCenterPassword           string
-	serviceClusterPodCIDR     string
-	serviceClusterServiceCIDR string
-	disableCleanup            bool
-	disablePreflight          bool
-	logLevel                  string
+	config                   string
+	vCenterURL               string
+	vCenterUser              string
+	vCenterPassword          string
+	managementClusterPodCIDR string
+	managementClusterCIDR    string
+	disableCleanup           bool
+	disablePreflight         bool
+	logLevel                 string
 }
 
 var (
@@ -44,8 +44,8 @@ var (
 )
 
 func readEnvSettings() {
-	envSettings.serviceClusterPodCIDR = os.Getenv("BOOTSTRAP_CLUSTER_POD_CIDR")
-	envSettings.serviceClusterServiceCIDR = os.Getenv("BOOTSTRAP_CLUSTER_SERVICE_CIDR")
+	envSettings.managementClusterPodCIDR = os.Getenv("BOOTSTRAP_CLUSTER_POD_CIDR")
+	envSettings.managementClusterCIDR = os.Getenv("BOOTSTRAP_CLUSTER_SERVICE_CIDR")
 	envSettings.logLevel = os.Getenv("LOG_LEVEL")
 	envSettings.vCenterURL = os.Getenv("GOVC_URL")
 	envSettings.vCenterUser = os.Getenv("GOVC_USERNAME")

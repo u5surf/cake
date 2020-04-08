@@ -19,18 +19,18 @@ import (
 )
 
 const (
-	labelVCenterURL                = "vCenter URL"
-	labelVCenterUsername           = "vCenter username"
-	labelVCenterPassword           = "vCenter password"
-	labelVCenterDatacenter         = "vSphere datacenter"
-	labelVCenterresourcepool       = "vSphere resourcepool"
-	labelVCenterDatastore          = "vSphere datastore"
-	labelNKSRegionName             = "Region name"
-	labelNKSServiceClusterNetwork  = "NKS Service Cluster Network"
-	labelNKSWorkloadClusterNetwork = "NKS Workload Cluster Network"
+	labelVCenterURL                   = "vCenter URL"
+	labelVCenterUsername              = "vCenter username"
+	labelVCenterPassword              = "vCenter password"
+	labelVCenterDatacenter            = "vSphere datacenter"
+	labelVCenterresourcepool          = "vSphere resourcepool"
+	labelVCenterDatastore             = "vSphere datastore"
+	labelCAPVRegionName               = "Region name"
+	labelCAPVManagementClusterNetwork = "Management Cluster Network"
+	labelCAPVWorkloadClusterNetwork   = "Workload Cluster Network"
 
-	labelAddStorageNetwork = "(Optional) Do you want to add a storage network to your workload cluster nodes?"
-	labelNKSStorageNetwork = "NKS Workload Cluster Storage Network"
+	labelAddStorageNetwork  = "(Optional) Do you want to add a storage network to your workload cluster nodes?"
+	labelCAPVStorageNetwork = "Workload Cluster Storage Network"
 
 	labelElementEnable   = "(Optional) Do you want to setup Element storage for your region? (This requires more information to be collected)"
 	labelElementMVIP     = "Element MVIP"
@@ -188,7 +188,7 @@ func collectVsphereInformation(spec *types.ConfigSpec) error {
 	}
 
 	if spec.ManagementNetworkID == "" {
-		if spec.ManagementNetworkID, err = selectObject(networklist, labelNKSServiceClusterNetwork); err != nil {
+		if spec.ManagementNetworkID, err = selectObject(networklist, labelCAPVManagementClusterNetwork); err != nil {
 			return fmt.Errorf("unable to select management network, %v", err)
 		}
 		for _, elem := range networklist {
@@ -199,7 +199,7 @@ func collectVsphereInformation(spec *types.ConfigSpec) error {
 	}
 
 	if spec.WorkloadNetworkID == "" {
-		if spec.WorkloadNetworkID, err = selectObject(networklist, labelNKSWorkloadClusterNetwork); err != nil {
+		if spec.WorkloadNetworkID, err = selectObject(networklist, labelCAPVWorkloadClusterNetwork); err != nil {
 			return fmt.Errorf("unable to select workload network, %v", err)
 		}
 		for _, elem := range networklist {
@@ -232,7 +232,7 @@ func storageNetwork(spec *types.ConfigSpec, networkList []NameAndID) {
 	}
 
 	if addStorageNetwork := getBooleanWithLabel(labelAddStorageNetwork); addStorageNetwork {
-		storageNetwork, err := selectObject(validStorageNetworks, labelNKSStorageNetwork)
+		storageNetwork, err := selectObject(validStorageNetworks, labelCAPVStorageNetwork)
 		if err != nil {
 			log.Fatalf("Unable to select network, %v", err)
 		}
@@ -503,7 +503,7 @@ func validateRegionName(r string) error {
 
 func getRegionName() (string, error) {
 	prompt := promptui.Prompt{
-		Label:    labelNKSRegionName,
+		Label:    labelCAPVRegionName,
 		Validate: validateRegionName,
 	}
 
@@ -511,18 +511,18 @@ func getRegionName() (string, error) {
 }
 
 func getServiceClusterPodCIDR(spec *types.ConfigSpec) {
-	if cliSettings.serviceClusterPodCIDR != "" {
-		spec.OptionalConfiguration.Cluster.KubernetesPodCidr = cliSettings.serviceClusterPodCIDR
-	} else if envSettings.serviceClusterPodCIDR != "" {
-		spec.OptionalConfiguration.Cluster.KubernetesPodCidr = envSettings.serviceClusterPodCIDR
+	if cliSettings.managementClusterPodCIDR != "" {
+		spec.OptionalConfiguration.Cluster.KubernetesPodCidr = cliSettings.managementClusterPodCIDR
+	} else if envSettings.managementClusterPodCIDR != "" {
+		spec.OptionalConfiguration.Cluster.KubernetesPodCidr = envSettings.managementClusterPodCIDR
 	}
 }
 
 func getServiceClusterServiceCIDR(spec *types.ConfigSpec) {
-	if cliSettings.serviceClusterServiceCIDR != "" {
-		spec.OptionalConfiguration.Cluster.KubernetesServiceCidr = cliSettings.serviceClusterServiceCIDR
-	} else if envSettings.serviceClusterServiceCIDR != "" {
-		spec.OptionalConfiguration.Cluster.KubernetesServiceCidr = envSettings.serviceClusterServiceCIDR
+	if cliSettings.managementClusterCIDR != "" {
+		spec.OptionalConfiguration.Cluster.KubernetesServiceCidr = cliSettings.managementClusterCIDR
+	} else if envSettings.managementClusterCIDR != "" {
+		spec.OptionalConfiguration.Cluster.KubernetesServiceCidr = envSettings.managementClusterCIDR
 	}
 }
 
