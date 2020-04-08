@@ -26,6 +26,32 @@ import (
 
 var cfgFile string
 
+type settings struct {
+	config                   string
+	vCenterURL               string
+	vCenterUser              string
+	vCenterPassword          string
+	managementClusterPodCIDR string
+	managementClusterCIDR    string
+	disableCleanup           bool
+	disablePreflight         bool
+	logLevel                 string
+}
+
+var (
+	cliSettings settings
+	envSettings settings
+)
+
+func readEnvSettings() {
+	envSettings.managementClusterPodCIDR = os.Getenv("BOOTSTRAP_CLUSTER_POD_CIDR")
+	envSettings.managementClusterCIDR = os.Getenv("BOOTSTRAP_CLUSTER_SERVICE_CIDR")
+	envSettings.logLevel = os.Getenv("LOG_LEVEL")
+	envSettings.vCenterURL = os.Getenv("GOVC_URL")
+	envSettings.vCenterUser = os.Getenv("GOVC_USERNAME")
+	envSettings.vCenterPassword = os.Getenv("GOVC_PASSWORD")
+}
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "capv-bootstrap",
@@ -52,35 +78,20 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.capv-bootstrap.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".capv-bootstrap" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".capv-bootstrap")
+	// Find home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
+
+	// Search config in home directory with name ".capv-bootstrap" (without extension).
+	viper.AddConfigPath(home)
+	viper.SetConfigName(".capv-bootstrap")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
