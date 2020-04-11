@@ -84,6 +84,7 @@ func logInit() {
 	}
 }
 
+// Execute cluster-engine
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
