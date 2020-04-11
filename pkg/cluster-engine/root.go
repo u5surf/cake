@@ -18,6 +18,7 @@ var (
 	controlPlaneMachineCountDefault = 1
 	workerMachineCountDefault       = 2
 	logLevelDefault                 = "info"
+	appName                         = "cluster-engine"
 )
 
 var rootCmd = &cobra.Command{
@@ -28,7 +29,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.capv-bootstrap.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/.%s.yaml)", appName))
 	rootCmd.PersistentFlags().StringVarP(&logLevel, "loglevel", "l", logLevelDefault, "specify a log level: debug, info, warning, error")
 	rootCmd.PersistentFlags().IntVarP(&controlPlaneMachineCount, "controllers", "c", controlPlaneMachineCountDefault, "the number of control plane nodes to provision")
 	rootCmd.PersistentFlags().IntVarP(&workerMachineCount, "workers", "w", workerMachineCountDefault, "the number of worker nodes to provision")
@@ -48,7 +49,7 @@ func initConfig() {
 		}
 
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".capv-bootstrap")
+		viper.SetConfigName("." + appName)
 	}
 
 	viper.AutomaticEnv()

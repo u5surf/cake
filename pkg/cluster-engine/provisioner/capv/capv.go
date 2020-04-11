@@ -104,49 +104,6 @@ type MgmtCluster struct {
 	} `yaml:"Configuration"`
 }
 
-// OLDMgmtCluster spec for CAPV
-type OLDMgmtCluster struct {
-	Vsphere                  `yaml:",inline"`
-	Element                  `yaml:",inline"`
-	K8s                      `yaml:",inline"`
-	RSAPublicKey             string `yaml:"VSPHERE_SSH_AUTHORIZED_KEY"`
-	ControlPlaneMachineCount string `yaml:"ControlPlaneMachineCount"`
-	WorkerMachineCount       string `yaml:"WorkerMachineCount"`
-}
-
-// Vsphere data fields
-type Vsphere struct {
-	Datacenter        string `yaml:"VSPHERE_DATACENTER"`
-	Datastore         string `yaml:"VSPHERE_DATASTORE"`
-	Folder            string `yaml:"VSPHERE_FOLDER"`
-	HaproxyTemplate   string `yaml:"VSPHERE_HAPROXY_TEMPLATE"`
-	NodeTemplate      string `yaml:"VSPHERE_TEMPLATE"`
-	ManagementNetwork string `yaml:"VSPHERE_NETWORK"`
-	WorkloadNetwork   string `yaml:"WorkloadNetwork"`
-	StorageNetwork    string `yaml:"StorageNetwork"`
-	ResourcePool      string `yaml:"VSPHERE_RESOURCE_POOL"`
-	Server            string `yaml:"VSPHERE_SERVER"`
-	VsphereUsername   string `yaml:"VSPHERE_USERNAME"`
-	VspherePassword   string `yaml:"VSPHERE_PASSWORD"`
-}
-
-// Element data fields
-type Element struct {
-	Mvip            string `yaml:"Mvip"`
-	Svip            string `yaml:"Svip"`
-	ElementPassword string `yaml:"ElementPassword"`
-	ElementUsername string `yaml:"ElementUsername"`
-}
-
-// K8s data fields
-type K8s struct {
-	ClusterName       string `yaml:"ClusterName"`
-	CapiSpec          string `yaml:"CapiSpec"`
-	KubernetesVersion string `yaml:"KubernetesVersion"`
-	Namespace         string `yaml:"Namespace"`
-	Kubeconfig        string `yaml:"Kubeconfig"`
-}
-
 // Event spec
 type Event struct {
 	EventType string
