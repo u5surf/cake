@@ -1,6 +1,6 @@
 # Cluster Engine
 
-Cluster Engine is a tool that handles interacting with upstream cluster provisioners tools, like CAPV or RKE, to create Kubernetes management clusters.
+Cluster Engine is a tool that handles interacting with upstream cluster provisioner tools, like CAPV or RKE, to create Kubernetes management clusters.
 
 ## Installation
 
