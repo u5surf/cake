@@ -15,6 +15,7 @@ const (
 	kubectl    requiredCmd = "kubectl"
 	docker     requiredCmd = "docker"
 	helm       requiredCmd = "helm"
+	tridentctl requiredCmd = "tridentctl"
 )
 
 // RequiredCommands for capv provisioner
@@ -26,12 +27,14 @@ func init() {
 	k := cmds.NewCommandLine(nil, string(kubectl), nil, nil)
 	d := cmds.NewCommandLine(nil, string(docker), nil, nil)
 	//h := cmds.NewCommandLine(nil, string(helm), nil, nil)
+	t := cmds.NewCommandLine(nil, string(tridentctl), nil, nil)
 
 	RequiredCommands.AddCommand(kd.CommandName, kd)
 	RequiredCommands.AddCommand(c.CommandName, c)
 	RequiredCommands.AddCommand(k.CommandName, k)
 	RequiredCommands.AddCommand(d.CommandName, d)
 	//RequiredCommands.AddCommand(h.CommandName, h)
+	RequiredCommands.AddCommand(t.CommandName, t)
 
 }
 
@@ -85,7 +88,20 @@ type MgmtCluster struct {
 	WorkerMachineCount       string `yaml:"WorkerMachineCount"`
 	LogFile                  string `yaml:"LogFile"`
 	events                   chan interface{}
-	Solidfire                struct {
+	Addons                   struct {
+		Solidfire struct {
+			Enable   bool   `yaml:"Enable"`
+			MVIP     string `yaml:"MVIP"`
+			SVIP     string `yaml:"SVIP"`
+			User     string `yaml:"User"`
+			Password string `yaml:"Password"`
+		} `yaml:"Solidfire"`
+		Observability struct {
+			Enabled         bool   `yaml:"Enabled"`
+			ArchiveLocation string `yaml:"ArchiveLocation"`
+		} `yaml:"Observability"`
+	} `yaml:"Addons"`
+	Solidfire struct {
 		Enable   bool   `yaml:"Enable"`
 		MVIP     string `yaml:"MVIP"`
 		SVIP     string `yaml:"SVIP"`

@@ -152,8 +152,18 @@ func runCapvProvisioner(controlPlaneMachineCount, workerMachineCount int) {
 	}
 	log.Info("Move to Permanent management cluster complete.")
 	responseBody.Messages = append(responseBody.Messages, "Move to Permanent management cluster complete")
-	responseBody.Complete = true
 
+	if C.Solidfire.Enable {
+		log.Info("Installing Addons...")
+		err = cluster.InstallAddons()
+		if err != nil {
+			log.Fatalf(err.Error())
+		}
+		log.Info("Addon installation complete.")
+		responseBody.Messages = append(responseBody.Messages, "Addon installation complete")
+	}
+
+	responseBody.Complete = true
 	stop := time.Now()
 	log.WithFields(log.Fields{
 		"ClusterName":              clusterName,
