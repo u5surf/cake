@@ -101,22 +101,11 @@ type MgmtCluster struct {
 			ArchiveLocation string `yaml:"ArchiveLocation"`
 		} `yaml:"Observability"`
 	} `yaml:"Addons"`
-	Solidfire struct {
-		Enable   bool   `yaml:"Enable"`
-		MVIP     string `yaml:"MVIP"`
-		SVIP     string `yaml:"SVIP"`
-		User     string `yaml:"User"`
-		Password string `yaml:"Password"`
-	} `yaml:"Solidfire"`
 	Configuration struct {
 		Cluster struct {
 			KubernetesPodCidr     string `yaml:"KubernetesPodCidr"`
 			KubernetesServiceCidr string `yaml:"KubernetesServiceCidr"`
 		} `yaml:"Cluster"`
-		Observability struct {
-			Enabled         bool   `yaml:"Enabled"`
-			ArchiveLocation string `yaml:"ArchiveLocation"`
-		} `yaml:"Observability"`
 	} `yaml:"Configuration"`
 }
 

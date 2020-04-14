@@ -42,10 +42,10 @@ func installTrident(m *MgmtCluster) error {
 
 	backend := fmt.Sprintf(
 		elementBackendJSON.Contents,
-		m.Solidfire.User,
-		m.Solidfire.Password,
-		m.Solidfire.MVIP,
-		m.Solidfire.SVIP,
+		m.Addons.Solidfire.User,
+		m.Addons.Solidfire.Password,
+		m.Addons.Solidfire.MVIP,
+		m.Addons.Solidfire.SVIP,
 		m.ClusterName,
 	)
 	err = writeToDisk(m.ClusterName, elementBackendJSON.Name, []byte(backend), 0644)
