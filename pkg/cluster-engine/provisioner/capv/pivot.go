@@ -8,8 +8,8 @@ import (
 	"github.com/netapp/capv-bootstrap/pkg/cmds"
 )
 
-// CAPvPivot moves CAPv from the bootstrap cluster to the permanent management cluster
-func (m *MgmtCluster) CAPvPivot() error {
+// PivotControlPlane moves CAPv from the bootstrap cluster to the permanent management cluster
+func (m *MgmtCluster) PivotControlPlane() error {
 	var err error
 
 	home, err := os.UserHomeDir()

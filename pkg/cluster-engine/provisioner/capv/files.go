@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type fileOnDisk struct {
@@ -241,4 +242,44 @@ func extractTar(dst string, r io.Reader) (string, error) {
 			f.Close()
 		}
 	}
+}
+
+func getAndOrExtractArchive(archiveLocation, dir string) (string, error) {
+	var err error
+	var targetDir string
+
+	if !strings.HasSuffix(dir, "/") {
+		dir = dir + "/"
+	}
+
+	loc, err := os.Stat(dir)
+	if err != nil || !loc.IsDir() {
+		return targetDir, err
+	}
+	if strings.HasPrefix(archiveLocation, "http://") || strings.HasPrefix(archiveLocation, "https://") {
+		url := archiveLocation
+		err = downloadFile(url, filepath.Base(url), dir)
+		if err != nil {
+			return targetDir, err
+		}
+		archive, err := os.Open(dir + filepath.Base(url))
+		if err != nil {
+			return targetDir, err
+		}
+		targetDir, err = extractTar(dir, archive)
+		if err != nil {
+			return targetDir, err
+		}
+
+	} else {
+		archive, err := os.Open(archiveLocation)
+		if err != nil {
+			return targetDir, err
+		}
+		targetDir, err = extractTar(dir, archive)
+		if err != nil {
+			return targetDir, err
+		}
+	}
+	return targetDir, err
 }

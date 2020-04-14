@@ -9,8 +9,8 @@ import (
 	"github.com/netapp/capv-bootstrap/pkg/cmds"
 )
 
-// InstallCAPV installs CAPv CRDs into the temporary bootstrap cluster
-func (m *MgmtCluster) InstallCAPV() error {
+// InstallControlPlane installs CAPv CRDs into the temporary bootstrap cluster
+func (m *MgmtCluster) InstallControlPlane() error {
 	var err error
 	home, err := os.UserHomeDir()
 	if err != nil {

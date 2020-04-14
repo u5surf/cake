@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/netapp/capv-bootstrap/pkg/cmds"
 	"golang.org/x/sync/errgroup"
@@ -27,6 +26,7 @@ func (m *MgmtCluster) InstallAddons() error {
 	})
 	g.Go(func() error {
 		if m.Addons.Observability.Enable {
+
 			return installObservability(m)
 		}
 		return nil
@@ -36,6 +36,7 @@ func (m *MgmtCluster) InstallAddons() error {
 }
 
 func installObservability(m *MgmtCluster) error {
+	m.events <- Event{EventType: "progress", Event: "installing the observability addon"}
 	var err error
 
 	//targetDir, err := getAndOrExtractArchive(m)
@@ -61,50 +62,12 @@ func installObservability(m *MgmtCluster) error {
 		sed -i 's/prometheus.nks-system.svc.cluster.local:8080/prometheus-server.nks-system.svc.cluster.local/g' grafana/grafana-values.yaml
 		make all
 	*/
+	m.events <- Event{EventType: "progress", Event: "observability addon install complete"}
 	return err
 }
 
-func getAndOrExtractArchive(archiveLocation, dir string) (string, error) {
-	var err error
-	var targetDir string
-
-	if !strings.HasSuffix(dir, "/") {
-		dir = dir + "/"
-	}
-
-	loc, err := os.Stat(dir)
-	if err != nil || !loc.IsDir() {
-		return targetDir, err
-	}
-	if strings.HasPrefix(archiveLocation, "http://") || strings.HasPrefix(archiveLocation, "https://") {
-		url := archiveLocation
-		err = downloadFile(url, filepath.Base(url), dir)
-		if err != nil {
-			return targetDir, err
-		}
-		archive, err := os.Open(dir + filepath.Base(url))
-		if err != nil {
-			return targetDir, err
-		}
-		targetDir, err = extractTar(dir, archive)
-		if err != nil {
-			return targetDir, err
-		}
-
-	} else {
-		archive, err := os.Open(archiveLocation)
-		if err != nil {
-			return targetDir, err
-		}
-		targetDir, err = extractTar(dir, archive)
-		if err != nil {
-			return targetDir, err
-		}
-	}
-	return targetDir, err
-}
-
 func installTrident(m *MgmtCluster) error {
+	m.events <- Event{EventType: "progress", Event: "installing the trident addon"}
 	var err error
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -161,7 +124,7 @@ func installTrident(m *MgmtCluster) error {
 	if err != nil {
 		return err
 	}
-
+	m.events <- Event{EventType: "progress", Event: "trident addon install complete"}
 	return err
 }
 

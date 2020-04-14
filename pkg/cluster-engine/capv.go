@@ -129,7 +129,7 @@ func runCapvProvisioner(controlPlaneMachineCount, workerMachineCount int) {
 		"ControlPlaneMachineCount": controlPlaneMachineCount,
 		"WorkerMachineCount":       workerMachineCount,
 	}).Info("Installing CAPv into Bootstrap cluster...")
-	err = cluster.InstallCAPV()
+	err = cluster.InstallControlPlane()
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
@@ -145,22 +145,20 @@ func runCapvProvisioner(controlPlaneMachineCount, workerMachineCount int) {
 	responseBody.Messages = append(responseBody.Messages, "Permanent management cluster created")
 
 	log.Info("Moving CAPv to permanent management cluster...")
-	err = cluster.CAPvPivot()
+	err = cluster.PivotControlPlane()
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
 	log.Info("Move to Permanent management cluster complete.")
 	responseBody.Messages = append(responseBody.Messages, "Move to Permanent management cluster complete")
 
-	if C.Addons.Solidfire.Enable {
-		log.Info("Installing Addons...")
-		err = cluster.InstallAddons()
-		if err != nil {
-			log.Fatalf(err.Error())
-		}
-		log.Info("Addon installation complete.")
-		responseBody.Messages = append(responseBody.Messages, "Addon installation complete")
+	log.Info("Installing Addons...")
+	err = cluster.InstallAddons()
+	if err != nil {
+		log.Fatalf(err.Error())
 	}
+	log.Info("Addon installation complete.")
+	responseBody.Messages = append(responseBody.Messages, "Addon installation complete")
 
 	responseBody.Complete = true
 	stop := time.Now()
