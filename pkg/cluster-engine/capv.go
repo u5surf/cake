@@ -91,8 +91,7 @@ func runCapvProvisioner(controlPlaneMachineCount, workerMachineCount int) {
 		"workerMachineCount":       workerMachineCount,
 	}).Info("Let's launch a cluster")
 
-	//cluster := capv.NewMgmtCluster(cpmCount, nmCount, clusterName)
-	cluster := capv.NewMgmtClusterFullConfig(C)
+	cluster := capv.NewMgmtCluster(C)
 	exist := cluster.RequiredCommands()
 	if len(exist) > 0 {
 		log.Fatalf("ERROR: the following commands were not found in $PATH: [%v]\n", strings.Join(exist, ", "))

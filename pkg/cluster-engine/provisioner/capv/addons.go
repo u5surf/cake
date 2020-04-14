@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/netapp/capv-bootstrap/pkg/cmds"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
@@ -15,13 +17,91 @@ const (
 
 // InstallAddons installs any optional Addons to a management cluster
 func (m *MgmtCluster) InstallAddons() error {
+	var g errgroup.Group
+
+	g.Go(func() error {
+		if m.Addons.Solidfire.Enable {
+			return installTrident(m)
+		}
+		return nil
+	})
+	g.Go(func() error {
+		if m.Addons.Observability.Enable {
+			return installObservability(m)
+		}
+		return nil
+	})
+
+	return g.Wait()
+}
+
+func installObservability(m *MgmtCluster) error {
 	var err error
 
-	if m.Addons.Solidfire.Enable {
-		err = installTrident(m)
+	//targetDir, err := getAndOrExtractArchive(m)
+	/*
+		check if there is a default storage class, if not install longhorn
+		kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/master/deploy/longhorn.yaml
+		kubectl create -f https://raw.githubusercontent.com/longhorn/longhorn/master/examples/storageclass.yaml
+		kubectl patch storageclass longhorn -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+	*/
+
+	// create alias from helm to helm3
+
+	/*
+		helm3 repo add stable https://kubernetes-charts.storage.googleapis.com
+		helm3 repo add loki https://grafana.github.io/loki/charts
+		kubectl create ns nks-system
+		helm3 install -n nks-system prometheus stable/prometheus
+		helm3 install -n nks-system loki loki/loki-stack
+	*/
+
+	/*
+		cd patch
+		sed -i 's/prometheus.nks-system.svc.cluster.local:8080/prometheus-server.nks-system.svc.cluster.local/g' grafana/grafana-values.yaml
+		make all
+	*/
+	return err
+}
+
+func getAndOrExtractArchive(archiveLocation, dir string) (string, error) {
+	var err error
+	var targetDir string
+
+	if !strings.HasSuffix(dir, "/") {
+		dir = dir + "/"
 	}
 
-	return err
+	loc, err := os.Stat(dir)
+	if err != nil || !loc.IsDir() {
+		return targetDir, err
+	}
+	if strings.HasPrefix(archiveLocation, "http://") || strings.HasPrefix(archiveLocation, "https://") {
+		url := archiveLocation
+		err = downloadFile(url, filepath.Base(url), dir)
+		if err != nil {
+			return targetDir, err
+		}
+		archive, err := os.Open(dir + filepath.Base(url))
+		if err != nil {
+			return targetDir, err
+		}
+		targetDir, err = extractTar(dir, archive)
+		if err != nil {
+			return targetDir, err
+		}
+
+	} else {
+		archive, err := os.Open(archiveLocation)
+		if err != nil {
+			return targetDir, err
+		}
+		targetDir, err = extractTar(dir, archive)
+		if err != nil {
+			return targetDir, err
+		}
+	}
+	return targetDir, err
 }
 
 func installTrident(m *MgmtCluster) error {

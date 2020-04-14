@@ -1,7 +1,11 @@
 package capv
 
 import (
+	"archive/tar"
+	"compress/gzip"
+	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 )
@@ -174,4 +178,67 @@ func writeToDisk(dirname string, fileName string, specFile []byte, perms os.File
 	err = ioutil.WriteFile(filepath.Join(newpath, fileName), specFile, perms)
 
 	return err
+}
+
+func downloadFile(URL, fileName string, fileLocation string) error {
+	response, err := http.Get(URL)
+	if err != nil {
+	}
+	defer response.Body.Close()
+
+	fpath := filepath.Join(fileLocation, fileName)
+	file, err := os.Create(fpath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, response.Body)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func extractTar(dst string, r io.Reader) (string, error) {
+	var target string
+	gzr, err := gzip.NewReader(r)
+	if err != nil {
+		return target, err
+	}
+	defer gzr.Close()
+
+	tr := tar.NewReader(gzr)
+
+	for {
+		header, err := tr.Next()
+		switch {
+		case err == io.EOF:
+			return target, nil
+		case err != nil:
+			return target, err
+		case header == nil:
+			continue
+		}
+
+		target = filepath.Join(dst, header.Name)
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			if _, err := os.Stat(target); err != nil {
+				if err := os.MkdirAll(target, 0755); err != nil {
+					return target, err
+				}
+			}
+		case tar.TypeReg:
+			f, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+			if err != nil {
+				return target, err
+			}
+			if _, err := io.Copy(f, tr); err != nil {
+				return target, err
+			}
+			f.Close()
+		}
+	}
 }

@@ -38,22 +38,8 @@ func init() {
 
 }
 
-// NewMgmtCluster creates a new cluster interface
-func NewMgmtCluster(controlPlaneMachineCount, workerMachineCount, clustername string) provisioner.Cluster {
-	mc := new(MgmtCluster)
-	mc.ClusterName = clustername
-	mc.ControlPlaneMachineCount = controlPlaneMachineCount
-	mc.WorkerMachineCount = workerMachineCount
-	mc.events = make(chan interface{})
-	if mc.LogFile != "" {
-		cmds.FileLogLocation = mc.LogFile
-		os.Truncate(mc.LogFile, 0)
-	}
-	return mc
-}
-
-// NewMgmtClusterFullConfig creates a new cluster interface with a full config from the client
-func NewMgmtClusterFullConfig(clusterConfig MgmtCluster) provisioner.Cluster {
+// NewMgmtCluster creates a new cluster interface with a full config from the client
+func NewMgmtCluster(clusterConfig MgmtCluster) provisioner.Cluster {
 	mc := new(MgmtCluster)
 	mc = &clusterConfig
 	mc.events = make(chan interface{})
