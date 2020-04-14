@@ -7,5 +7,6 @@ type Cluster interface {
 	CreatePermanent() error
 	CAPvPivot() error
 	InstallAddons() error
+	RequiredCommands() []string
 	Events() chan interface{}
 }

@@ -26,14 +26,14 @@ func init() {
 	c := cmds.NewCommandLine(nil, string(clusterctl), nil, nil)
 	k := cmds.NewCommandLine(nil, string(kubectl), nil, nil)
 	d := cmds.NewCommandLine(nil, string(docker), nil, nil)
-	//h := cmds.NewCommandLine(nil, string(helm), nil, nil)
+	h := cmds.NewCommandLine(nil, string(helm), nil, nil)
 	t := cmds.NewCommandLine(nil, string(tridentctl), nil, nil)
 
 	RequiredCommands.AddCommand(kd.CommandName, kd)
 	RequiredCommands.AddCommand(c.CommandName, c)
 	RequiredCommands.AddCommand(k.CommandName, k)
 	RequiredCommands.AddCommand(d.CommandName, d)
-	//RequiredCommands.AddCommand(h.CommandName, h)
+	RequiredCommands.AddCommand(h.CommandName, h)
 	RequiredCommands.AddCommand(t.CommandName, t)
 
 }
@@ -61,6 +61,7 @@ func NewMgmtClusterFullConfig(clusterConfig MgmtCluster) provisioner.Cluster {
 		cmds.FileLogLocation = mc.LogFile
 		os.Truncate(mc.LogFile, 0)
 	}
+
 	return mc
 }
 
@@ -97,7 +98,7 @@ type MgmtCluster struct {
 			Password string `yaml:"Password"`
 		} `yaml:"Solidfire"`
 		Observability struct {
-			Enabled         bool   `yaml:"Enabled"`
+			Enable          bool   `yaml:"Enabled"`
 			ArchiveLocation string `yaml:"ArchiveLocation"`
 		} `yaml:"Observability"`
 	} `yaml:"Addons"`

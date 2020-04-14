@@ -64,10 +64,6 @@ func serveProgress(logfile string, kubeconfig string) {
 func runCapvProvisioner(controlPlaneMachineCount, workerMachineCount int) {
 
 	clusterName := "capv-mgmt-cluster"
-	exist := capv.RequiredCommands.Exist()
-	if exist != nil {
-		log.Fatalf("ERROR: the following commands were not found in $PATH: [%v]\n", strings.Join(exist, ", "))
-	}
 
 	C := capv.MgmtCluster{}
 
@@ -97,6 +93,10 @@ func runCapvProvisioner(controlPlaneMachineCount, workerMachineCount int) {
 
 	//cluster := capv.NewMgmtCluster(cpmCount, nmCount, clusterName)
 	cluster := capv.NewMgmtClusterFullConfig(C)
+	exist := cluster.RequiredCommands()
+	if len(exist) > 0 {
+		log.Fatalf("ERROR: the following commands were not found in $PATH: [%v]\n", strings.Join(exist, ", "))
+	}
 	progress := cluster.Events()
 
 	go func() {
