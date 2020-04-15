@@ -67,9 +67,9 @@ func runCapvProvisioner(controlPlaneMachineCount, workerMachineCount int) {
 
 	C := capv.MgmtCluster{}
 
-	errJ := viper.Unmarshal(&C)
+	errJ := viper.UnmarshalExact(&C)
 	if errJ != nil {
-		log.Fatalf("unable to decode into struct, %v", errJ)
+		log.Fatalf("unable to decode into struct, %v", errJ.Error())
 	}
 
 	home, errH := homedir.Dir()
