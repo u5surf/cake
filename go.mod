@@ -3,10 +3,10 @@ module github.com/netapp/capv-bootstrap
 go 1.13
 
 require (
-	github.com/docker/docker v1.13.1
 	github.com/gookit/color v1.2.4
 	github.com/manifoldco/promptui v0.7.0
 	github.com/mitchellh/go-homedir v1.1.0
+	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.7
 	github.com/spf13/viper v1.6.2
