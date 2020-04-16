@@ -3,8 +3,8 @@ package capv
 import (
 	"os"
 
-	"github.com/netapp/capv-bootstrap/pkg/cluster-engine/provisioner"
-	"github.com/netapp/capv-bootstrap/pkg/cmds"
+	"github.com/netapp/cake/pkg/cluster-engine/provisioner"
+	"github.com/netapp/cake/pkg/cmds"
 )
 
 type requiredCmd string

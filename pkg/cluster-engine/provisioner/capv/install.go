@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/netapp/capv-bootstrap/pkg/cmds"
+	"github.com/netapp/cake/pkg/cmds"
 )
 
 // InstallCAPV installs CAPv CRDs into the temporary bootstrap cluster
