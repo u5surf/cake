@@ -25,17 +25,17 @@ import (
 )
 
 // DeployOVATemplate uploads ova and makes it a template
-func DeployOVATemplate(vSphere *VSphere, templateName, templatePath string) (*object.VirtualMachine, error) {
+func (r *Resource) DeployOVATemplate(templateName, templatePath string) (*object.VirtualMachine, error) {
 	ctx := context.TODO()
 
-	vSphereClient, err := vSphere.SessionManager.GetClient()
+	vSphereClient, err := r.SessionManager.GetClient()
 	if err != nil {
 		return nil, fmt.Errorf("unable to get vSphere client, %v", err)
 	}
 
 	finder := find.NewFinder(vSphereClient.Client, true)
 
-	finder.SetDatacenter(vSphere.Datacenter)
+	finder.SetDatacenter(r.Datacenter)
 
 	foundTemplate, err := finder.VirtualMachine(ctx, templateName)
 	if err == nil {
@@ -45,7 +45,7 @@ func DeployOVATemplate(vSphere *VSphere, templateName, templatePath string) (*ob
 	networks := []types.OvfNetworkMapping{
 		{
 			Name:    "nic0",
-			Network: vSphere.ManagementNetwork.Reference(),
+			Network: r.Network.Reference(),
 		},
 	}
 
@@ -63,7 +63,7 @@ func DeployOVATemplate(vSphere *VSphere, templateName, templatePath string) (*ob
 		NetworkMapping: networks,
 	}
 
-	vm, err := createVirtualMachine(ctx, cisp, templatePath, vSphere)
+	vm, err := createVirtualMachine(ctx, cisp, templatePath, r)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create virtual machine, %v", err)
 	}
@@ -81,7 +81,7 @@ func DeployOVATemplate(vSphere *VSphere, templateName, templatePath string) (*ob
 	return vm, nil
 }
 
-func createVirtualMachine(ctx context.Context, cisp types.OvfCreateImportSpecParams, ovaPath string, vSphere *VSphere) (*object.VirtualMachine, error) {
+func createVirtualMachine(ctx context.Context, cisp types.OvfCreateImportSpecParams, ovaPath string, vSphere *Resource) (*object.VirtualMachine, error) {
 	vSphereClient, err := vSphere.SessionManager.GetClient()
 	if err != nil {
 		return nil, fmt.Errorf("unable to get vSphere client, %v", err)
@@ -106,7 +106,7 @@ func createVirtualMachine(ctx context.Context, cisp types.OvfCreateImportSpecPar
 		}
 	}
 
-	lease, err := vSphere.ResourcePool.ImportVApp(ctx, spec.ImportSpec, vSphere.TemplateFolder, nil)
+	lease, err := vSphere.ResourcePool.ImportVApp(ctx, spec.ImportSpec, vSphere.Folder, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to import the template, %v", err)
 	}
@@ -279,7 +279,7 @@ func removeNICs(ctx context.Context, vm *object.VirtualMachine) error {
 
 	log.Debugf("Removing NICs from VM %s (%s)", vm.InventoryPath, vm.Reference())
 
-	vmProps, err := properties(vm)
+	vmProps, err := getProperties(vm)
 	if err != nil {
 		return pkgerrors.Wrap(err, "unable to get virtual machine properties")
 	}
@@ -321,11 +321,4 @@ func removeNICs(ctx context.Context, vm *object.VirtualMachine) error {
 	return nil
 }
 
-func properties(vm *object.VirtualMachine) (*mo.VirtualMachine, error) {
-	ctx := context.TODO()
-	var props mo.VirtualMachine
-	if err := vm.Properties(ctx, vm.Reference(), nil, &props); err != nil {
-		return nil, fmt.Errorf("unable to get virtual machine properties, %v", err)
-	}
-	return &props, nil
-}
+

@@ -1,5 +1,5 @@
 # CAKE
-Cluster Adjacent Kubernetes Engine, is a simple tool used to deploy on-prem kubernetes and Rancher clusters.
+Cloud Adjacent Kubernetes Engine, is a simple tool used to deploy on-prem kubernetes and Rancher clusters.
 
 ## What is the capv-bootstrap binary
 
