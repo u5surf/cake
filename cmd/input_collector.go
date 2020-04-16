@@ -15,7 +15,7 @@ import (
 	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/vim25/mo"
 
-	"github.com/netapp/capv-bootstrap/pkg/config/types"
+	"github.com/netapp/cake/pkg/config/types"
 )
 
 const (
