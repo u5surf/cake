@@ -21,6 +21,7 @@ type SessionManager interface {
 	GetFolders() ([]*object.Folder, error)
 	GetDatastores(*object.Datacenter) ([]*object.Datastore, error)
 	GetResourcePools(*object.Datacenter) ([]*object.ResourcePool, error)
+	GetVMORTemplate(dc *object.Datacenter, name string) (*object.VirtualMachine, error)
 }
 
 type sessionManager struct {
@@ -174,5 +175,21 @@ func (m *sessionManager) GetResourcePools(dc *object.Datacenter) ([]*object.Reso
 		return nil, err
 	}
 	return folders, err
+
+}
+
+func (m *sessionManager) GetVMORTemplate(dc *object.Datacenter, name string) (*object.VirtualMachine, error) {
+	client, err := m.GetClient()
+	if err != nil {
+		return nil, err
+	}
+	finder := find.NewFinder(client.Client, true)
+	finder.SetDatacenter(dc)
+	vm, err := finder.VirtualMachine(context.TODO(), name)
+	if err != nil {
+		return nil, err
+	}
+
+	return vm, err
 
 }
