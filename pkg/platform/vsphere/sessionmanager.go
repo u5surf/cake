@@ -21,7 +21,7 @@ type SessionManager interface {
 	GetFolders() ([]*object.Folder, error)
 	GetDatastores(*object.Datacenter) ([]*object.Datastore, error)
 	GetResourcePools(*object.Datacenter) ([]*object.ResourcePool, error)
-	GetVMORTemplate(dc *object.Datacenter, name string) (*object.VirtualMachine, error)
+	GetVM(dc *object.Datacenter, name string) (*object.VirtualMachine, error)
 }
 
 type sessionManager struct {
@@ -178,7 +178,7 @@ func (m *sessionManager) GetResourcePools(dc *object.Datacenter) ([]*object.Reso
 
 }
 
-func (m *sessionManager) GetVMORTemplate(dc *object.Datacenter, name string) (*object.VirtualMachine, error) {
+func (m *sessionManager) GetVM(dc *object.Datacenter, name string) (*object.VirtualMachine, error) {
 	client, err := m.GetClient()
 	if err != nil {
 		return nil, err

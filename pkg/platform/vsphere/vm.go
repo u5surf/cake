@@ -13,7 +13,10 @@ import (
 
 func (r *Resource) CloneTemplate(template *object.VirtualMachine, name string, bootScript, publicKey, osUser string) (*object.VirtualMachine, error) {
 
-	ctx := context.TODO()
+	// give whole clone process a 10 minute timeout
+	d := time.Now().Add(10 * time.Minute)
+	ctx, cancel := context.WithDeadline(context.Background(), d)
+	defer cancel()
 
 	cloudinitUserDataConfig, err := cloudinit.GenerateUserData(bootScript, publicKey, osUser)
 	if err != nil {
@@ -49,9 +52,7 @@ func (r *Resource) CloneTemplate(template *object.VirtualMachine, name string, b
 		deviceSpecs = append(deviceSpecs, nicspec)
 	}
 
-	nicid := int32(-100)
 	nic := types.VirtualVmxnet3{}
-	nic.Key = nicid
 	nic.Backing, err = r.Network.EthernetCardBackingInfo(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get information on NIC, %v", err)
@@ -74,7 +75,7 @@ func (r *Resource) CloneTemplate(template *object.VirtualMachine, name string, b
 		return nil, fmt.Errorf("clone task failed, %v", err)
 	}
 
-	vm, err := r.SessionManager.GetVMORTemplate(r.Datacenter, name)
+	vm, err := r.SessionManager.GetVM(r.Datacenter, name)
 	if err != nil {
 		return nil, fmt.Errorf("unable to find virtual machine, %v", err)
 	}

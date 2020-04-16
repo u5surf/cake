@@ -29,8 +29,6 @@ func TestSetupTemplate(t *testing.T) {
 
 	templateName := "ubuntu-1804-kube-v1.17.3"
 	templateOVA := "https://storage.googleapis.com/capv-images/release/v1.17.3/ubuntu-1804-kube-v1.17.3.ova"
-	//loadbalancerTemplateName := "capv-haproxy-v0.6.0-rc.2"
-	//loadbalancerTemplateOVA := "https://storage.googleapis.com/capv-images/extra/haproxy/release/v0.6.0-rc.2/capv-haproxy-v0.6.0-rc.2.ova"
 
 	vs.SessionManager = c
 	_, err = vs.DeployOVATemplate(templateName, templateOVA)
