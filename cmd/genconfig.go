@@ -23,7 +23,7 @@ import (
 	"runtime"
 
 	"github.com/gookit/color"
-	"github.com/netapp/capv-bootstrap/pkg/config/types"
+	"github.com/netapp/cake/pkg/config/types"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )

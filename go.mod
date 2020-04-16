@@ -1,14 +1,15 @@
-module github.com/netapp/capv-bootstrap
+module github.com/netapp/cake
 
-go 1.13
+go 1.14
 
 require (
 	github.com/gookit/color v1.2.4
 	github.com/manifoldco/promptui v0.7.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/sirupsen/logrus v1.4.2
-	github.com/spf13/cobra v0.0.7
-	github.com/spf13/viper v1.6.2
+	github.com/pkg/errors v0.9.1
+	github.com/sirupsen/logrus v1.5.0
+	github.com/spf13/cobra v1.0.0
+	github.com/spf13/viper v1.6.3
 	github.com/vmware/govmomi v0.22.2
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 	gopkg.in/yaml.v3 v3.0.0-20200121175148-a6ecf24a6d71
