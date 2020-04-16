@@ -1,6 +1,6 @@
 package capv
 
-import "github.com/netapp/capv-bootstrap/pkg/cmds"
+import "github.com/netapp/cake/pkg/cmds"
 
 type requiredCmd string
 
