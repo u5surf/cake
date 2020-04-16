@@ -279,7 +279,7 @@ func removeNICs(ctx context.Context, vm *object.VirtualMachine) error {
 
 	log.Debugf("Removing NICs from VM %s (%s)", vm.InventoryPath, vm.Reference())
 
-	vmProps, err := properties(vm)
+	vmProps, err := getProperties(vm)
 	if err != nil {
 		return pkgerrors.Wrap(err, "unable to get virtual machine properties")
 	}
@@ -321,11 +321,4 @@ func removeNICs(ctx context.Context, vm *object.VirtualMachine) error {
 	return nil
 }
 
-func properties(vm *object.VirtualMachine) (*mo.VirtualMachine, error) {
-	ctx := context.TODO()
-	var props mo.VirtualMachine
-	if err := vm.Properties(ctx, vm.Reference(), nil, &props); err != nil {
-		return nil, fmt.Errorf("unable to get virtual machine properties, %v", err)
-	}
-	return &props, nil
-}
+

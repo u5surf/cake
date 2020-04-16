@@ -2,6 +2,7 @@ package vsphere
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -10,8 +11,18 @@ import (
 	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/view"
 	"github.com/vmware/govmomi/vim25"
+	"github.com/vmware/govmomi/vim25/mo"
 	vim25types "github.com/vmware/govmomi/vim25/types"
 )
+
+func getProperties(vm *object.VirtualMachine) (*mo.VirtualMachine, error) {
+	ctx := context.TODO()
+	var props mo.VirtualMachine
+	if err := vm.Properties(ctx, vm.Reference(), nil, &props); err != nil {
+		return nil, fmt.Errorf("unable to get virtual machine properties, %v", err)
+	}
+	return &props, nil
+}
 
 func vmExists(vm *object.VirtualMachine) (bool, error) {
 	ctx := context.TODO()

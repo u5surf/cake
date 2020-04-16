@@ -29,7 +29,7 @@ func (r *Resource) CloneTemplate(template *object.VirtualMachine, name string, b
 	spec.PowerOn = false // Do not turn machine on until after metadata reconfiguration
 	spec.Location.DiskMoveType = string(types.VirtualMachineRelocateDiskMoveOptionsMoveAllDiskBackingsAndConsolidate)
 
-	vmProps, err := properties(template)
+	vmProps, err := getProperties(template)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get virtual machine properties, %v", err)
 	}
@@ -49,7 +49,6 @@ func (r *Resource) CloneTemplate(template *object.VirtualMachine, name string, b
 		deviceSpecs = append(deviceSpecs, nicspec)
 	}
 
-	// Add nic connected to management network
 	nicid := int32(-100)
 	nic := types.VirtualVmxnet3{}
 	nic.Key = nicid
@@ -75,56 +74,10 @@ func (r *Resource) CloneTemplate(template *object.VirtualMachine, name string, b
 		return nil, fmt.Errorf("clone task failed, %v", err)
 	}
 
-	/*
-		vSphereClient, err := r.SessionManager.GetClient()
-		if err != nil {
-			return nil, fmt.Errorf("unable to get vSphere client, %v", err)
-		}
-
-		finder := find.NewFinder(vSphereClient.Client, true)
-
-		finder.SetDatacenter(r.Datacenter)
-
-	*/
 	vm, err := r.SessionManager.GetVMORTemplate(r.Datacenter, name)
-	//vm, err := finder.VirtualMachine(ctx, name)
 	if err != nil {
 		return nil, fmt.Errorf("unable to find virtual machine, %v", err)
 	}
-
-	/*
-		macAddress, err := getMacAddress(vm)
-		if err != nil {
-			return nil, fmt.Errorf("unable to get MAC address of VM, %v", err)
-		}
-
-		var cloudinitMetaDataConfig cloudinit.Config
-
-		var metadataValues *cloudinit.MetadataValues
-
-		log.Debugf("Using DHCP")
-		metadataValues, err = getMetadataValues(name, macAddress, true, ipamlib.IPAddressReservation{})
-		if err != nil {
-			return nil, fmt.Errorf("unable to get cloudinit metadata values, %v", err)
-		}
-
-		metadata, err := cloudinit.GetMetadata(metadataValues)
-		if err != nil {
-			return nil, fmt.Errorf("unable to get cloud init metadata, %v", err)
-		}
-
-		if err = cloudinitMetaDataConfig.SetCloudInitMetadata(metadata); err != nil {
-			return nil, fmt.Errorf("unable to set cloud init metadata in extra config, %v", err)
-		}
-
-		log.Debugf("reconfiguring %s with metadata", name)
-		task, err = vm.Reconfigure(ctx, types.VirtualMachineConfigSpec{
-			ExtraConfig: cloudinitMetaDataConfig,
-		})
-		if err != nil {
-			return nil, fmt.Errorf("unable to set metadata on VM, %v", err)
-		}
-	*/
 
 	err = task.Wait(ctx)
 	if err != nil {
