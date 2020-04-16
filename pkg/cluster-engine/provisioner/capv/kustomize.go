@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/netapp/capv-bootstrap/pkg/cmds"
+	"github.com/netapp/cake/pkg/cmds"
 )
 
 const (
