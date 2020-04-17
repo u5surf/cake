@@ -52,45 +52,7 @@ func TestExec(t *testing.T) {
 	// TODO add tests here
 }
 
-func TestExtractArchive(t *testing.T) {
-	path, err := os.Getwd()
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-	fileLoc := filepath.Join(path, "testdata/test_data.tar.gz")
-	tests := []struct {
-		name       string
-		archiveLoc string
-	}{
-		{"url", "https://github.com/kubernetes/kubernetes/releases/download/v1.18.1/kubernetes.tar.gz"},
-		{"file location", fileLoc},
-	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			name := strings.Replace(tt.name, " ", "_", -1) + "_test_"
-			dir, err := ioutil.TempDir("/tmp", name)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			defer os.RemoveAll(dir)
-			var targetDir string
-			if tt.name == "url" {
-				targetDir, err = extractRemoteArchive(tt.archiveLoc, dir)
-			} else {
-				targetDir, err = extractLocalArchive(tt.archiveLoc, dir)
-			}
-
-			if err != nil {
-				t.Fatal(err.Error())
-			}
-			// TODO add some actual tests
-			fmt.Println(targetDir)
-		})
-	}
-
-}
 
 const baseYaml = `apiVersion: cluster.x-k8s.io/v1alpha3
 kind: Cluster
