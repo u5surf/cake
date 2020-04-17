@@ -25,7 +25,7 @@ import (
 	"github.com/gookit/color"
 	"github.com/netapp/cake/pkg/config/types"
 	"github.com/spf13/cobra"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 var (
