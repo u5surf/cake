@@ -1,11 +1,9 @@
 package capv
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
@@ -51,8 +49,6 @@ func TestExec(t *testing.T) {
 	}
 	// TODO add tests here
 }
-
-
 
 const baseYaml = `apiVersion: cluster.x-k8s.io/v1alpha3
 kind: Cluster
