@@ -52,7 +52,7 @@ func TestExec(t *testing.T) {
 	// TODO add tests here
 }
 
-func TestGetAndOrExtractArchive(t *testing.T) {
+func TestExtractArchive(t *testing.T) {
 	path, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err.Error())
@@ -75,7 +75,13 @@ func TestGetAndOrExtractArchive(t *testing.T) {
 			}
 
 			defer os.RemoveAll(dir)
-			targetDir, err := getAndOrExtractArchive(tt.archiveLoc, dir)
+			var targetDir string
+			if tt.name == "url" {
+				targetDir, err = extractRemoteArchive(tt.archiveLoc, dir)
+			} else {
+				targetDir, err = extractLocalArchive(tt.archiveLoc, dir)
+			}
+
 			if err != nil {
 				t.Fatal(err.Error())
 			}
