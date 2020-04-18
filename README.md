@@ -27,4 +27,4 @@ tool will interactively create a config and initiate the deployment.
 
 ### destroy
 
-`capb-bootstrap destroy --cluster-id xxx` will destroy the cluster of the given id if it exists.
+`capv-bootstrap destroy --cluster-id xxx` will destroy the cluster of the given id if it exists.
